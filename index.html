@@ -1,0 +1,401 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WGU: D471 Global Supply Chain Management - Practice Exam</title>
+  <style>
+    :root{
+      --wgu-blue:#003058;
+      --wgu-blue-700:#002544;
+      --wgu-green:#00A36C;
+      --card:#ffffff;
+      --muted:#e6ecf2;
+      --text:#0f172a;
+      --danger:#B00020;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Futura, 'Trebuchet MS', Arial, sans-serif;
+      background-color: #f4f6f9;
+      margin: 0;
+      color: var(--text);
+      padding: 0;
+    }
+    /* Sticky progress bar (white text on WGU blue, centered) */
+    .progress-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      background: var(--wgu-blue);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .progress {
+      position: relative;
+      height: 56px;
+      width: 100%;
+      overflow: hidden;
+      background: var(--wgu-blue);
+    }
+    /* Green fill grows under text as background layer */
+    .progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: var(--wgu-green);
+      transition: width 260ms ease;
+      opacity: 0.6;
+    }
+    .progress-text {
+      position: relative;
+      z-index: 2; /* ensure above green fill */
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      letter-spacing: .3px;
+      color: #ffffff;
+      text-align: center;
+      padding: 0 12px;
+      white-space: nowrap; /* do not wrap */
+    }
+
+    header {
+      padding: 28px 16px 8px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.0rem;
+      color: var(--wgu-blue);
+    }
+    .sub {
+      color: var(--wgu-blue-700);
+      margin-top: 6px;
+    }
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 12px 16px 80px;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 8px auto 16px;
+      flex-wrap: wrap;
+    }
+    button {
+      background: var(--wgu-blue);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+    button.secondary {
+      background: #ffffff;
+      color: var(--wgu-blue);
+      border: 2px dashed var(--wgu-blue);
+    }
+    button:disabled { opacity: .6; cursor: not-allowed; }
+
+    .question {
+      background: var(--card);
+      border: 2px dashed var(--wgu-blue);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.06);
+    }
+    .q-title {
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--wgu-blue-700);
+    }
+    .choices { display: grid; gap: 10px; margin: 10px 0 0; }
+    .choice {
+      border: 1px solid #d9dee8;
+      background: var(--muted);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+      position: relative;
+    }
+    .choice:hover { transform: translateY(-1px); }
+    .choice input { margin: 0; transform: scale(1.1); }
+    .choice.correct {
+      border-color: var(--wgu-green);
+      background: #eaf7f0;
+    }
+    .choice.incorrect {
+      border-color: var(--danger);
+      background: #fdecef;
+    }
+    .choice.locked { cursor: default; opacity: 0.95; }
+    .feedback {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.98rem;
+      line-height: 1.3rem;
+      display: none;
+    }
+    .feedback.show { display: block; }
+    .feedback.ok {
+      background: #eaf7f0;
+      border: 1px solid var(--wgu-green);
+      color: #064e3b;
+    }
+    .feedback.no {
+      background: #fdecef;
+      border: 1px solid var(--danger);
+      color: #6a0010;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      border: 0;
+    }
+    .summary {
+      background: #fff;
+      border: 2px dashed var(--wgu-blue);
+      border-radius: 14px;
+      padding: 18px;
+      margin-top: 22px;
+      display: none;
+    }
+    .summary.show { display: block; }
+    .muted { color: #475569; }
+  </style>
+</head>
+<body>
+  <div class="progress-wrap" role="region" aria-label="Quiz progress">
+    <div class="progress">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      <div class="progress-text" id="progressText">Score: 0/0 • 0% • Answered 0/0 • Remaining 0</div>
+    </div>
+  </div>
+
+  <header>
+    <h1>WGU: D471 Global Supply Chain Management — Practice Exam</h1>
+    <div class="sub">Select an answer for each question. Immediate feedback with explanations will appear and your answer will be locked.</div>
+  </header>
+
+  <main>
+    <div class="controls">
+      <button id="btnSummary" class="secondary" aria-expanded="false">View Summary</button>
+      <button id="btnReset">Reset Quiz</button>
+    </div>
+
+    <section id="quiz" aria-live="polite"></section>
+
+    <section id="summary" class="summary" aria-live="polite">
+      <h2 style="margin-top:0;color:var(--wgu-blue)">Results Summary</h2>
+      <p id="summaryStats" class="muted"></p>
+      <ol id="summaryList"></ol>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      questions: [],
+      total: 0,
+      answered: 0,
+      correct: 0
+    };
+
+    function el(tag, attrs={}, ...children){
+      const node = document.createElement(tag);
+      for(const [k,v] of Object.entries(attrs)){
+        if(k === 'class') node.className = v;
+        else if(k.startsWith('on') && typeof v === 'function') node.addEventListener(k.substring(2), v);
+        else if(k === 'html') node.innerHTML = v;
+        else node.setAttribute(k, v);
+      }
+      for(const child of children){
+        if(child == null) continue;
+        if(typeof child === 'string') node.appendChild(document.createTextNode(child));
+        else node.appendChild(child);
+      }
+      return node;
+    }
+
+    // Fisher–Yates shuffle
+    function shuffle(arr){
+      const a = arr.slice();
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function updateProgress(){
+      const pct = state.total ? Math.round((state.correct/state.total)*100) : 0;
+      const ans = state.answered;
+      const remaining = state.total - ans;
+      const txt = `Score: ${state.correct}/${state.total} • ${pct}% • Answered ${ans}/${state.total} • Remaining ${remaining}`;
+      const pText = document.getElementById('progressText');
+      pText.textContent = txt;
+      // Green fill shows ANSWER PROGRESS (not score), as a background layer
+      const fillPct = state.total ? Math.round((ans/state.total)*100) : 0;
+      const fill = document.getElementById('progressFill');
+      fill.style.width = fillPct + '%';
+    }
+
+    function renderSummary(){
+      const sum = document.getElementById('summary');
+      const ol = document.getElementById('summaryList');
+      const stats = document.getElementById('summaryStats');
+      ol.innerHTML = '';
+      const pct = state.total ? Math.round((state.correct/state.total)*100) : 0;
+      stats.textContent = `You answered ${state.answered} of ${state.total} questions. Score: ${state.correct}/${state.total} (${pct}%).`;
+      state.questions.forEach((q, idx) => {
+        const li = el('li', {});
+        li.appendChild(el('div', {class: 'q-title'}, `Q${idx+1}. ${q.question}`));
+        const your = q._chosen ?? '(not answered)';
+        li.appendChild(el('div', {class:'muted'}, `Your answer: ${your}`));
+        li.appendChild(el('div', {}, `Correct answer: ${q.correct}`));
+        li.appendChild(el('div', {class: 'muted'}, `Explanation: ${q.explanation}`));
+        ol.appendChild(li);
+      });
+    }
+
+    function resetQuiz(){
+      state.answered = 0;
+      state.correct = 0;
+      const quiz = document.getElementById('quiz');
+      quiz.innerHTML = '';
+      document.getElementById('summary').classList.remove('show');
+      document.getElementById('btnSummary').setAttribute('aria-expanded','false');
+      // reshuffle questions and choices on reset
+      const randomized = shuffle(state.questions).map(q => ({
+        ...q,
+        choices: shuffle(q.choices),
+        _answered: false,
+        _chosen: null
+      }));
+      renderQuestions(randomized);
+      updateProgress();
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function renderQuestions(questions){
+      const quiz = document.getElementById('quiz');
+      state.total = questions.length;
+      state.questions = questions; // keep current randomized set
+      questions.forEach((q, idx) => {
+        const card = el('article', {class:'question', role:'group', 'aria-labelledby': `q${idx}-title`});
+        const title = el('div', {class:'q-title', id:`q${idx}-title`}, q.question);
+        const choicesWrap = el('div', {class:'choices'});
+
+        q.choices.forEach((choiceText, cIdx) => {
+          const choiceId = `q${idx}-c${cIdx}`;
+          const input = el('input', {type:'radio', name:`q${idx}`, id:choiceId, value: choiceText});
+          const label = el('label', {for: choiceId, class:'choice'});
+          label.appendChild(input);
+          label.appendChild(el('span', {}, choiceText));
+
+          input.addEventListener('change', () => {
+            if (input.disabled) return;
+
+            // lock: disable all inputs for this question
+            const radios = card.querySelectorAll('input[type="radio"]');
+            radios.forEach(r => { r.disabled = true; r.parentElement.classList.add('locked'); });
+
+            // record choice and compute correctness (match by text)
+            q._chosen = choiceText;
+            const isCorrect = (choiceText.trim() === (q.correct || '').trim());
+            if (isCorrect) {
+              label.classList.add('correct');
+              state.correct += 1;
+            } else {
+              label.classList.add('incorrect');
+              // also highlight the correct choice
+              const correctNode = Array.from(radios).find(r => r.value.trim() === (q.correct || '').trim());
+              if(correctNode) correctNode.parentElement.classList.add('correct');
+            }
+
+            // show feedback
+            const fb = card.querySelector('.feedback');
+            fb.classList.add('show');
+            fb.classList.remove('ok','no');
+            fb.classList.add(isCorrect ? 'ok' : 'no');
+            fb.innerHTML = `<strong>${isCorrect ? 'Correct' : 'Incorrect'}.</strong> ${q.explanation}`;
+
+            // increment answered once
+            if (!q._answered){
+              q._answered = true;
+              state.answered += 1;
+            }
+
+            updateProgress();
+          });
+
+          choicesWrap.appendChild(label);
+        });
+
+        const feedback = el('div', {class:'feedback', role:'status', 'aria-live':'polite'});
+        card.appendChild(title);
+        card.appendChild(choicesWrap);
+        card.appendChild(feedback);
+        quiz.appendChild(card);
+      });
+
+      updateProgress();
+    }
+
+    async function init(){
+      try{
+        const res = await fetch('quiz-data.json', {cache:'no-store'});
+        if(!res.ok) throw new Error(`Failed to load quiz-data.json: ${res.status} ${res.statusText}`);
+        const data = await res.json();
+        if(!data || !Array.isArray(data.questions)) throw new Error('Invalid quiz-data.json format.');
+
+        // Randomize questions and choices on first load
+        const randomized = shuffle(data.questions).map(q => ({
+          ...q,
+          choices: shuffle(q.choices),
+          _answered: false,
+          _chosen: null
+        }));
+
+        renderQuestions(randomized);
+      }catch(err){
+        const quiz = document.getElementById('quiz');
+        quiz.innerHTML = `<div class="question"><div class="q-title">Error loading quiz</div><p>${err.message}</p><p class="muted">Ensure <code>quiz-data.json</code> is in the same folder as this HTML when hosting on GitHub Pages.</p></div>`;
+        console.error(err);
+      }
+
+      document.getElementById('btnReset').addEventListener('click', resetQuiz);
+      document.getElementById('btnSummary').addEventListener('click', () => {
+        const sum = document.getElementById('summary');
+        const btn = document.getElementById('btnSummary');
+        const open = sum.classList.toggle('show');
+        btn.textContent = open ? 'Hide Summary' : 'View Summary';
+        btn.setAttribute('aria-expanded', String(open));
+        if(open){ renderSummary(); }
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
